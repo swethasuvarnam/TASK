@@ -1,0 +1,78 @@
+import speech_recognition as sr
+import pyttsx3
+import datetime
+import wikipedia
+import webbrowser
+import os
+import random
+
+# Initialize speech recognizer and text-to-speech engine
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+
+# Function to convert text to speech
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+# Function to take voice commands
+def take_command():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+
+        try:
+            command = recognizer.recognize_google(audio)
+            print("User said:", command)
+            return command.lower()
+        except sr.UnknownValueError:
+            print("Sorry, could not understand that.")
+            return ""
+        except sr.RequestError:
+            print("Sorry, a problem occurred with the API request.")
+            return ""
+
+# Function to handle different commands
+def handle_command(command):
+    if "hello" in command:
+        speak("Hello! How can I help you?")
+    elif "what can you do" in command:
+        speak("I can search Wikipedia, open websites, tell you the time, and more. What do you need?")
+    elif "time" in command:
+        time_now = datetime.datetime.now().strftime("%I:%M %p")
+        speak(f"The current time is {time_now}")
+    elif "search" in command:
+        speak("What do you want me to search for?")
+        search_query = take_command()
+        if search_query:
+            try:
+                result = wikipedia.summary(search_query, sentences=2)
+                speak("According to Wikipedia")
+                speak(result)
+            except wikipedia.exceptions.WikipediaException:
+                speak("Sorry, I couldn't find any information on that.")
+    elif "open website" in command:
+        speak("Which website do you want me to open?")
+        website = take_command()
+        if website:
+            url = f"https://www.{website}.com"
+            webbrowser.open(url)
+            speak(f"Opening {website}")
+    elif "exit" in command:
+        speak("Goodbye!")
+        exit()
+
+    else:
+        responses = [
+            "Sorry, I don't understand.",
+            "Can you repeat that?",
+            "I'm not sure what you're asking for."
+        ]
+        speak(random.choice(responses))
+
+# Main program loop
+if __name__ == "__main__":
+    speak("Hello! How can I assist you today?")
+    while True:
+        command = take_command()
+        handle_command(command)
