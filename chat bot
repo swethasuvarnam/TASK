@@ -1,0 +1,24 @@
+
+# Define a dictionary of patterns and responses for the chatbot
+import random
+pairs = {
+    "hi": ["Hello!", "Hi there!"],
+    "hello": ["Hello!", "Hi there!"],
+    "hey": ["Hello!", "Hi there!"],
+    "how are you": ["I'm good, thank you.", "I'm doing well."],
+    "what is your name": ["You can call me a chatbot.", "I'm a chatbot."],
+    "quit": ["Bye! Take care."],
+}
+
+def chatbot_response(user_input):
+    for pattern, responses in pairs.items():
+        if pattern in user_input:
+            return random.choice(responses)
+    return "I'm not sure how to respond to that."
+
+# Start interacting with the chatbot
+print("Welcome to the chatbot. Type 'quit' to exit.")
+while True:
+    user_input = input("You: ")
+    response = chatbot_response(user_input)
+    print("Chatbot:", response)
